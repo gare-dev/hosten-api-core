@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Server {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  environment String // "prod", "staging", "dev"
+  host        String? // opcional: hostname ou IP
+  description String?
+
+  // Autenticação do agent
+  clientId     String @unique @default(ulid())
+  clientSecret String // hash, nunca plain text
+
+  // Controle
+  isActive Boolean @default(true)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}

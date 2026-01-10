@@ -1,0 +1,15 @@
+{
+ "compilerOptions": {
+  "target": "es2023",
+  "module": "CommonJS",
+  "esModuleInterop": true,
+  "allowSyntheticDefaultImports": true,
+  "outDir": "./dist",
+  "strict": true,
+  "skipLibCheck": true,
+  "lib": ["ES2023"],
+  "forceConsistentCasingInFileNames": true
+ },
+ "include": ["src/**/*.ts"],
+ "exclude": ["node_modules"]
+}
