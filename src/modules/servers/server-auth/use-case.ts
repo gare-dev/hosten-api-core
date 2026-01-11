@@ -11,8 +11,6 @@ export async function serverAuth(data: ServerAuthSchemaType) {
 
     const server = await serverAuth({ ...data });
 
-    console.log(server)
-
     if (!server) {
         return errorResponse("Invalid server name or client secret", STATUS_CODES.UNAUTHORIZED);
     }
@@ -23,7 +21,7 @@ export async function serverAuth(data: ServerAuthSchemaType) {
         return errorResponse("Invalid server name or client secret", STATUS_CODES.UNAUTHORIZED);
     }
 
-    const token = jwt.sign({ clientId: server.clientId }, envs.JWT_TOKEN, { expiresIn: '15m' })
+    const token = jwt.sign({ clientId: server.clientId, type: 'agent' }, envs.JWT_TOKEN, { expiresIn: '3m' })
 
     return successResponse({ message: "Authentication successful", token }, STATUS_CODES.OK);
 }

@@ -1,29 +1,83 @@
 import { Server } from "socket.io";
 import { httpServer } from "./server";
 import { socketAuth } from "../infra/http/middleware/socket-auth";
-
+import { ServerListener, servers } from "./listeners/server-listener";
+import { doubleConnection } from "../infra/http/middleware/double-connection";
+import { ServerCommandType } from "../../modules/servers/server-command/schema";
+import pendingCommands from "../helpers/pending-commands";
 
 export class SocketIO {
-    private socket: Server
+    private io: Server
 
     constructor() {
-        this.socket = new Server(httpServer, {
+        this.io = new Server(httpServer, {
             cors: {
                 origin: "http://localhost:3000",
                 methods: ["GET", "POST"],
                 credentials: true
             }
         })
-        this.socket.use(socketAuth)
+
+        this.io.use(socketAuth)
+        this.io.use(doubleConnection)
+
+        this.setUpServer()
     }
 
     private setUpServer() {
-        this.socket.on("connection", (socket) => {
-            const user = socket.data.user
+        this.io.on("connection", (socket) => {
+            const handler = new ServerListener(socket)
+            const server = socket.data.server
 
-
-
-
+            handler.registerServer()
+            this.serverCommandResult(socket)
+            this.registerHeartBeat(socket, handler)
+            this.registerDisconnect(socket, handler, server.clientId)
         })
     }
+
+    private registerHeartBeat(socket: any, handler: ServerListener) {
+        socket.on("heartbeat", (socket: any) => {
+            handler.updateServerStatus(socket);
+        });
+    }
+
+    private serverCommandResult(socket: any) {
+        socket.on("server-command-result", (payload: any) => {
+            const pending = pendingCommands.get(payload.commandId);
+            if (!pending) return;
+
+            clearTimeout(pending.timeout);
+            pending.resolve(payload);
+            pendingCommands.delete(payload.commandId);
+        });
+
+    }
+
+    private registerDisconnect(socket: any, handler: ServerListener, clientId: string) {
+        socket.on("disconnect", () => {
+            console.log(`Server ${clientId} disconnected`)
+            handler.disconnectServer()
+        })
+    }
+
+    public async emitToServer(clientId: string, event: string, payload: ServerCommandType) {
+        const server = servers.find(s => s.clientId === clientId);
+
+        if (!server) throw new Error("Server not connected");
+
+        return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                pendingCommands.delete(payload.commandId);
+                reject(new Error("Command timeout"));
+            }, 15_000);
+
+            pendingCommands.set(payload.commandId, { resolve, reject, timeout });
+
+            server?.socket.emit("pm2-command", payload);
+        });
+    }
+
+
 }
+
