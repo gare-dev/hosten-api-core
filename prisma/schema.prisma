@@ -16,17 +16,61 @@ datasource db {
 model Server {
   id          String  @id @default(cuid())
   name        String  @unique
-  environment String // "prod", "staging", "dev"
-  host        String? // opcional: hostname ou IP
+  environment String
+  host        String?
   description String?
 
-  // Autenticação do agent
   clientId     String @unique @default(ulid())
-  clientSecret String // hash, nunca plain text
+  clientSecret String
 
-  // Controle
   isActive Boolean @default(true)
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  username  String     @unique
+  password  String
+  isActive  Boolean    @default(true)
+  roles     UserRole[]
+  createdAt DateTime   @default(now())
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id       String           @id @default(uuid())
+  resource String
+  action   String
+  roles    RolePermission[]
+
+  @@unique([resource, action])
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
 }

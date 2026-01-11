@@ -8,12 +8,11 @@ import { CommandTypeSchema } from "./server-command/schema";
 import { PM2ServerCommand } from "./server-command/use-case";
 import { ServerCommandGateway } from "../../shared/helpers/server-command-gateway";
 import { SocketServer } from "../../shared/socket/server";
-import type { ErrorStatusCode } from '../../shared/infra/http/status-codes';
-
+import checkPermission from "../../shared/infra/http/middleware/check-permission";
 
 const serverRoutes = express.Router();
 
-serverRoutes.post("/", async (req: Request, res: Response) => {
+serverRoutes.post("/", checkPermission, async (req: Request, res: Response) => {
     const data = req.body;
 
     const [schemaError, parsedSchema, schemaCode] = validateSchema(ServerInsertSchema, data)
@@ -41,10 +40,9 @@ serverRoutes.post("/auth", async (req: Request, res: Response) => {
     return res.status(server.code).json({ ...server.data });
 });
 
-serverRoutes.post("/command", async (req: Request, res: Response) => {
+serverRoutes.post("/command", checkPermission, async (req: Request, res: Response) => {
     const data = req.body;
     const commandId = crypto.randomUUID();
-
 
     const [schemaError, parsedSchema, schemaCode] = validateSchema(CommandTypeSchema, { ...data, commandId })
 
