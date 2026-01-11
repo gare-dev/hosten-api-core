@@ -3,7 +3,7 @@ import { envs } from "../../../config/env";
 import jwt from "jsonwebtoken";
 
 export function socketAuth(socket: Socket, next: (err?: Error) => void) {
-    const token = socket.handshake.headers.token as string
+    const token = socket.handshake.auth?.token
 
     if (!token) {
         console.log("No token provided in socket handshake headers");
