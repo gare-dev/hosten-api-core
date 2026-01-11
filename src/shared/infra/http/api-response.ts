@@ -1,13 +1,13 @@
 import type { ErrorStatusCode, SuccessStatusCode } from './status-codes';
 
-type ErrorResult<Code extends ErrorStatusCode> = {
+export type ErrorResult<Code extends ErrorStatusCode> = {
     data: {
         message: string;
     },
     code: Code;
 };
 
-type SuccessResult<
+export type SuccessResult<
     T extends Record<string, unknown> | boolean | unknown[],
     Code extends SuccessStatusCode
 > = {

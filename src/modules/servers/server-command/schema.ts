@@ -11,4 +11,6 @@ export const CommandTypeSchema = z.object({
     clientId: z.string().min(1, "clientId is required")
 })
 
+
+
 export type ServerCommandType = z.infer<typeof CommandTypeSchema>;

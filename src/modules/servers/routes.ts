@@ -4,13 +4,12 @@ import { serverInsert } from "./server-insert/use-case";
 import { validateSchema } from "../../shared/helpers/validate-schema";
 import { ServerAuthSchema } from "./server-auth/schema";
 import { serverAuth } from "./server-auth/use-case";
-import { ServerListener } from "../../shared/socket/listeners/server-listener";
-import { Socket } from "socket.io";
-import { SocketIO } from "../../shared/socket";
 import { CommandTypeSchema } from "./server-command/schema";
 import { PM2ServerCommand } from "./server-command/use-case";
 import { ServerCommandGateway } from "../../shared/helpers/server-command-gateway";
 import { SocketServer } from "../../shared/socket/server";
+import type { ErrorStatusCode } from '../../shared/infra/http/status-codes';
+
 
 const serverRoutes = express.Router();
 
@@ -57,6 +56,6 @@ serverRoutes.post("/command", async (req: Request, res: Response) => {
 
     const command = await serverCommand.execute(parsedSchema.data)
 
-    return res.status(200).json({ command });
+    return res.status(command.code).json({ ...command.data });
 })
 export default serverRoutes

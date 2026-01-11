@@ -5,6 +5,9 @@ import { ServerListener, servers } from "./listeners/server-listener";
 import { doubleConnection } from "../infra/http/middleware/double-connection";
 import { ServerCommandType } from "../../modules/servers/server-command/schema";
 import pendingCommands from "../helpers/pending-commands";
+import { errorResponse, successResponse, ErrorResult, SuccessResult } from "../infra/http/api-response";
+import { PM2CommandResult } from "../types/pm2-command-result";
+import type { ErrorStatusCode, SuccessStatusCode } from '../infra/http/status-codes';
 
 export class SocketIO {
     private io: Server
@@ -61,10 +64,10 @@ export class SocketIO {
         })
     }
 
-    public async emitToServer(clientId: string, event: string, payload: ServerCommandType) {
+    public async emitToServer(clientId: string, event: string, payload: ServerCommandType): Promise<ErrorResult<ErrorStatusCode> | SuccessResult<PM2CommandResult, SuccessStatusCode>> {
         const server = servers.find(s => s.clientId === clientId);
 
-        if (!server) throw new Error("Server not connected");
+        if (!server) return errorResponse("Server not connected", 400);
 
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
@@ -72,7 +75,11 @@ export class SocketIO {
                 reject(new Error("Command timeout"));
             }, 15_000);
 
-            pendingCommands.set(payload.commandId, { resolve, reject, timeout });
+            pendingCommands.set(payload.commandId, {
+                resolve: (result: PM2CommandResult) => resolve(successResponse(result, 200)),
+                reject,
+                timeout
+            });
 
             server?.socket.emit("pm2-command", payload);
         });
