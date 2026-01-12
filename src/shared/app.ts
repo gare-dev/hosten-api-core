@@ -1,6 +1,5 @@
 import { envs } from "./config/env"
 import app from "./socket/server"
-import cors from "cors"
 import express from 'express'
 import serverRoutes from "../modules/servers/routes"
 import userRoutes from "../modules/users/routes"
@@ -9,9 +8,15 @@ import permissionRoutes from "../modules/permission/route"
 import rolePermissionRoutes from "../modules/role-permission/routes"
 import userRoleRoutes from "../modules/user-role/routes"
 import checkPermission from "./infra/http/middleware/check-permission"
+import cors from "cors"
 
-app.use(cors())
+
 app.use(express.json())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+}))
 
 app.use('/server', serverRoutes)
 app.use('/user', userRoutes)

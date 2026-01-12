@@ -4,6 +4,7 @@ import { envs } from "../../shared/config/env"
 import { SocketIO } from ".";
 
 const app = express()
+
 export const httpServer = createServer(app)
 
 httpServer.listen(envs.SOCKET_PORT, () => {
