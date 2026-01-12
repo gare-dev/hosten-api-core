@@ -9,6 +9,7 @@ import rolePermissionRoutes from "../modules/role-permission/routes"
 import userRoleRoutes from "../modules/user-role/routes"
 import checkPermission from "./infra/http/middleware/check-permission"
 import cors from "cors"
+import { servers } from "./socket/listeners/server-listener"
 
 
 app.use(express.json())
@@ -24,6 +25,9 @@ app.use('/role', checkPermission, roleRoutes)
 app.use('/permission', checkPermission, permissionRoutes)
 app.use('/role-permission', checkPermission, rolePermissionRoutes)
 app.use('/user-role', checkPermission, userRoleRoutes)
+app.get("/teste", (req, res) => {
+    res.send({ servers: servers.map(s => ({ clientId: s.clientId, lastSeenAt: s.lastSeenAt, metrics: s.metrics })) })
+})
 
 app.listen(envs.HTTP_PORT, () => {
     console.log(`HTTP server is running on port ${envs.HTTP_PORT}`);

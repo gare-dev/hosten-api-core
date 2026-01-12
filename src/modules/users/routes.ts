@@ -34,7 +34,7 @@ userRoutes.post("/auth", async (req: Request, res: Response) => {
 
     const user = await userAuth(parsedSchema.data) as { code: number; data: { token: string; permissions: Array<{ action: string; resource: string }> } };
 
-    return res.status(user.code).cookie("token", user.data.token, { httpOnly: true, secure: true, sameSite: "none", path: "/" }).json({ ...user.data });
+    return res.status(user.code).cookie("token", user.data.token, { httpOnly: true, secure: true, sameSite: "none", path: "/" }).json({ ...user.data, token: undefined });
 })
 
 export default userRoutes

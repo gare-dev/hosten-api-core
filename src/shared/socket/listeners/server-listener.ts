@@ -1,7 +1,5 @@
 import { Socket } from "socket.io";
 import { MetricsType } from "../../types/metrics";
-import { uptime } from "node:process";
-import { ServerCommandType } from "../../../modules/servers/server-command/schema";
 
 export const servers: { socket: Socket, clientId: string, jwt: string, lastSeenAt: Date, metrics: MetricsType }[] = []
 

@@ -9,6 +9,7 @@ import { PM2ServerCommand } from "./server-command/use-case";
 import { ServerCommandGateway } from "../../shared/helpers/server-command-gateway";
 import { SocketServer } from "../../shared/socket/server";
 import checkPermission from "../../shared/infra/http/middleware/check-permission";
+import { serverSelect } from "./server-select/use-case";
 
 const serverRoutes = express.Router();
 
@@ -55,5 +56,13 @@ serverRoutes.post("/command", checkPermission, async (req: Request, res: Respons
     const command = await serverCommand.execute(parsedSchema.data)
 
     return res.status(command.code).json({ ...command.data });
+})
+
+serverRoutes.get("/", checkPermission, async (req: Request, res: Response) => {
+
+    const servers = await serverSelect()
+
+    return res.status(servers.code).json({ ...servers.data });
+
 })
 export default serverRoutes

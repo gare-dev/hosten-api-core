@@ -22,9 +22,16 @@ export const ServerRepository = () => {
         });
     }
 
+    const serverSelect = async () => {
+        return await prisma.server.findMany({
+            where: { isActive: true }
+        });
+    }
+
     return {
         serverAuth,
         serverInsert,
-        getServerByName
+        getServerByName,
+        serverSelect,
     }
 }
