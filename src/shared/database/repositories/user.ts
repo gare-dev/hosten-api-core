@@ -20,6 +20,31 @@ export const UserRepository = () => {
         })
     }
 
+    const getUsers = async () => {
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                roles: {
+                    select: {
+                        role: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        return users.map(user => ({
+            ...user,
+            roles: user.roles.map(r => r.role)
+        }))
+    }
+
     const getPermissionsByUsername = async (username: string) => {
         return await prisma.user.findUnique({
             where: {
@@ -52,6 +77,7 @@ export const UserRepository = () => {
         userInsert,
         getUserByEmail,
         getUserByUsername,
-        getPermissionsByUsername
+        getPermissionsByUsername,
+        getUsers,
     }
 }

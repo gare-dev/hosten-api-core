@@ -1,7 +1,7 @@
 import z from "zod"
 
 export const RolePermissionInsertSchema = z.object({
-    roleId: z.string(),
+    roleId: z.string().min(1),
     permissionId: z.string().min(1)
 })
 

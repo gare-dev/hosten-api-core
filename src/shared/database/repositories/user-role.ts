@@ -8,7 +8,19 @@ export const UserRoleRepository = () => {
         })
     }
 
+    const userRoleDeleteByIds = async (userId: string, roleId: string) => {
+        return await prisma.userRole.deleteMany({
+            where: {
+                userId,
+                roleId,
+            }
+        })
+    }
+
+
+
     return {
-        userRoleInsert
+        userRoleInsert,
+        userRoleDeleteByIds,
     }
 }

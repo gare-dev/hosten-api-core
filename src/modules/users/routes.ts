@@ -5,6 +5,7 @@ import { userInsert } from "./user-insert/use-case";
 import { UserAuthSchema } from "./user-auth/schema";
 import { userAuth } from "./user-auth/use-case";
 import checkPermission from "../../shared/infra/http/middleware/check-permission";
+import { userSelect } from "./user-select/use-case";
 
 
 const userRoutes = express.Router();
@@ -36,5 +37,15 @@ userRoutes.post("/auth", async (req: Request, res: Response) => {
 
     return res.status(user.code).cookie("token", user.data.token, { httpOnly: true, secure: true, sameSite: "none", path: "/" }).json({ ...user.data, token: undefined });
 })
+
+userRoutes.delete("/auth", async (req: Request, res: Response) => {
+    return res.status(200).cookie("token", null).json({ message: "Logged out successfully" });
+})
+
+userRoutes.get("/", checkPermission, async (req: Request, res: Response) => {
+    const users = await userSelect();
+
+    return res.status(users.code).json(users);
+});
 
 export default userRoutes
