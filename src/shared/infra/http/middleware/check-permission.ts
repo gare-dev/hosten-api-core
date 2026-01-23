@@ -17,6 +17,7 @@ async function checkPermission(req: Request, res: Response, next: NextFunction) 
         const decoded = jwt.verify(token, envs.JWT_TOKEN) as jwtType
 
         if (!decoded.permissions.includes(`${resource}:${action}`)) {
+            req.userId = decoded.userId
             return next()
         }
 

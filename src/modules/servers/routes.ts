@@ -16,7 +16,7 @@ const serverRoutes = express.Router();
 serverRoutes.post("/", checkPermission, async (req: Request, res: Response) => {
     const data = req.body;
 
-    const [schemaError, parsedSchema, schemaCode] = validateSchema(ServerInsertSchema, data)
+    const [schemaError, parsedSchema, schemaCode] = validateSchema(ServerInsertSchema, { ...data, userId: req.userId })
 
     if (schemaError) {
         return res.status(schemaCode).json({ error: schemaError });

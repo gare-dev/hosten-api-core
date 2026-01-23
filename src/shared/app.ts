@@ -9,7 +9,6 @@ import rolePermissionRoutes from "../modules/role-permission/routes"
 import userRoleRoutes from "../modules/user-role/routes"
 import checkPermission from "./infra/http/middleware/check-permission"
 import cors from "cors"
-import { servers } from "./socket/listeners/server-listener"
 import resourceRoutes from "../modules/resource/route"
 
 app.use(express.json())

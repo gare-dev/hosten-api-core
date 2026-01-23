@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -14,19 +8,19 @@ datasource db {
 }
 
 model Server {
-  id          String  @id @default(cuid())
-  name        String  @unique
-  environment String
-  host        String?
-  description String?
-
-  clientId     String @unique @default(ulid())
+  id           String    @id @default(cuid())
+  userId       String    @default("")
+  name         String    @unique
+  environment  String
+  host         String?
+  description  String?
+  clientId     String    @unique @default(ulid())
   clientSecret String
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
 
-  isActive Boolean @default(true)
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  User User @relation(fields: [userId], references: [id])
 }
 
 model User {
@@ -35,15 +29,16 @@ model User {
   username  String     @unique
   password  String
   isActive  Boolean    @default(true)
-  roles     UserRole[]
   createdAt DateTime   @default(now())
+  roles     UserRole[]
+  servers   Server[]
 }
 
 model Role {
   id          String           @id @default(uuid())
   name        String           @unique
-  users       UserRole[]
   permissions RolePermission[]
+  users       UserRole[]
 }
 
 model Permission {
@@ -58,9 +53,8 @@ model Permission {
 model UserRole {
   userId String
   roleId String
-
-  user User @relation(fields: [userId], references: [id])
-  role Role @relation(fields: [roleId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   @@id([userId, roleId])
 }
@@ -68,9 +62,8 @@ model UserRole {
 model RolePermission {
   roleId       String
   permissionId String
-
-  role       Role       @relation(fields: [roleId], references: [id])
-  permission Permission @relation(fields: [permissionId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
 
   @@id([roleId, permissionId])
 }

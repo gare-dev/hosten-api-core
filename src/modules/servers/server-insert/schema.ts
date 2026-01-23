@@ -5,6 +5,7 @@ export const ServerInsertSchema = z.object({
     environment: z.enum(["prod", "staging", "dev", "testing"]),
     host: z.string().min(1),
     description: z.string().optional(),
+    userId: z.string().min(1),
 })
 
 export const ServerSchema = z.object({

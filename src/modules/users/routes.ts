@@ -10,7 +10,7 @@ import { userSelect } from "./user-select/use-case";
 
 const userRoutes = express.Router();
 
-userRoutes.post("/", checkPermission, async (req: Request, res: Response) => {
+userRoutes.post("/", async (req: Request, res: Response) => {
     const data = req.body;
 
     const [schemaError, parsedSchema, schemaCode] = validateSchema(UserInsertSchema, data)
@@ -19,9 +19,9 @@ userRoutes.post("/", checkPermission, async (req: Request, res: Response) => {
         return res.status(schemaCode).json({ error: schemaError });
     }
 
-    const user = await userInsert(parsedSchema.data)
+    const user = await userInsert(parsedSchema.data) as { code: number; data: { token: string } };
 
-    return res.status(user.code).json({ ...user.data });
+    return res.status(user.code).cookie("token", user.data.token, { httpOnly: true, secure: true, sameSite: "none", path: "/" }).json({ ...user.data, token: undefined });
 })
 
 userRoutes.post("/auth", async (req: Request, res: Response) => {
@@ -34,6 +34,10 @@ userRoutes.post("/auth", async (req: Request, res: Response) => {
     }
 
     const user = await userAuth(parsedSchema.data) as { code: number; data: { token: string; permissions: Array<{ action: string; resource: string }> } };
+
+    if (user.code === 401) {
+        return res.status(user.code).json({ ...user });
+    }
 
     return res.status(user.code).cookie("token", user.data.token, { httpOnly: true, secure: true, sameSite: "none", path: "/" }).json({ ...user.data, token: undefined });
 })

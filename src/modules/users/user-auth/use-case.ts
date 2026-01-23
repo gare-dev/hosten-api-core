@@ -26,8 +26,8 @@ export async function userAuth(data: UserAuthType) {
     const token = jwt.sign({
         userId: user.id,
         username: user.username,
-        permissions: permissions?.roles.flatMap(userRole => userRole.role.permissions.map(p => `${p.permission.resource}:${p.permission.action}`)) ?? []
+        permissions: permissions?.roles.flatMap(userRole => userRole?.role.permissions.map(p => `${p.permission.resource}:${p.permission.action}`)) ?? []
     }, envs.JWT_TOKEN, { expiresIn: '6h' })
 
-    return successResponse({ token, permissions: permissions?.roles[0].role.permissions.map(p => ({ action: p.permission.action, resource: p.permission.resource })) }, 200);
+    return successResponse({ token, permissions: permissions?.roles[0]?.role.permissions.map(p => ({ action: p.permission.action, resource: p.permission.resource })) }, 200);
 }
