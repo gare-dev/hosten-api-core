@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { MetricsType } from "../../types/metrics";
 
-export const servers: { socket: Socket, clientId: string, jwt: string, lastSeenAt: Date, metrics: MetricsType }[] = []
+export const servers: { socket: Socket, clientId: string, jwt: string, lastSeenAt: Date, metrics: MetricsType, userId: string }[] = []
 
 export class ServerListener {
     private socket: Socket
@@ -14,13 +14,13 @@ export class ServerListener {
         const token = this.socket.data.server
         if (token) {
             servers.push({
-                socket: this.socket, clientId: token.clientId, jwt: this.socket.handshake.headers.token as string, lastSeenAt: new Date(), metrics: {
+                socket: this.socket, clientId: token.clientId, jwt: this.socket.handshake.headers.token as string, userId: token.userId, lastSeenAt: new Date(), metrics: {
                     uptime: process.uptime(),
                     memory: process.memoryUsage().rss,
                     timestamp: Date.now(),
                 }
             })
-            console.table(servers.map(s => ({ socket_id: s.socket.id, clientId: s.clientId, lastSeenAt: s.lastSeenAt, uptime: s.metrics.uptime })))
+            console.table(servers.map(s => ({ socket_id: s.socket.id, clientId: s.clientId, lastSeenAt: s.lastSeenAt, uptime: s.metrics.uptime, userId: s.userId })))
         }
     }
 

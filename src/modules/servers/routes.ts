@@ -59,8 +59,9 @@ serverRoutes.post("/command", checkPermission, async (req: Request, res: Respons
 })
 
 serverRoutes.get("/", checkPermission, async (req: Request, res: Response) => {
+    const userId = req.userId;
 
-    const servers = await serverSelect()
+    const servers = await serverSelect(userId)
 
     return res.status(servers.code).json({ ...servers.data });
 

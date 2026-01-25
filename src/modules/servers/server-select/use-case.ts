@@ -4,13 +4,13 @@ import { STATUS_CODES } from "../../../shared/infra/http/status-codes";
 import { servers as connectedServersList } from "../../../shared/socket/listeners/server-listener"
 
 
-export async function serverSelect() {
+export async function serverSelect(userId: string) {
     const { serverSelect } = ServerRepository()
 
-    const servers = await serverSelect();
+    const servers = await serverSelect(userId);
 
     const mergedServers = servers.map(server => {
-        const connectedServer = connectedServersList.find(s => s.clientId === server.clientId);
+        const connectedServer = connectedServersList.find(s => (s.clientId === server.clientId && s.userId === userId));
 
         return {
             connected: !!connectedServer,
