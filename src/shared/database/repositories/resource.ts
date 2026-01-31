@@ -1,14 +1,21 @@
 
+import { get } from "node:http"
 import { ResourceInsertType } from "../../../modules/resource/resource-insert/schema"
 import prisma from "../index"
 
 export const ResourceRepository = () => {
     const resourceInsert = async (data: ResourceInsertType) => {
-        console.log("data", data)
         return await prisma.permission.createMany({
             data: [...data],
         })
     }
+
+    const getAllPermissionByTeamId = async (teamId: string) => {
+        return await prisma.permission.findMany({
+            where: { teamId }
+        });
+    }
+
 
     const resourceSelect = async () => {
         const permissions = await prisma.permission.findMany({
@@ -44,6 +51,7 @@ export const ResourceRepository = () => {
     return {
         resourceInsert,
         resourceSelect,
-        resourceDelete
+        resourceDelete,
+        getAllPermissionByTeamId,
     }
 }

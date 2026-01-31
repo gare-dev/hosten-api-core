@@ -10,6 +10,8 @@ import userRoleRoutes from "../modules/user-role/routes"
 import checkPermission from "./infra/http/middleware/check-permission"
 import cors from "cors"
 import resourceRoutes from "../modules/resource/route"
+import teamRoutes from "../modules/team/routes"
+import teamInvitationRoutes from "../modules/team-invitation/routes"
 
 app.use(express.json())
 app.use(cors({
@@ -24,6 +26,8 @@ app.use('/role', checkPermission, roleRoutes)
 app.use('/resource', checkPermission, resourceRoutes)
 app.use('/role-permission', checkPermission, rolePermissionRoutes)
 app.use('/user-role', checkPermission, userRoleRoutes)
+app.use('/team', checkPermission, teamRoutes)
+app.use('/team-invitation', checkPermission, teamInvitationRoutes)
 
 app.listen(envs.HTTP_PORT, () => {
     console.log(`HTTP server is running on port ${envs.HTTP_PORT}`);

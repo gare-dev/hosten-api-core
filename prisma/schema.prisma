@@ -10,44 +10,58 @@ datasource db {
 model Server {
   id           String    @id @default(cuid())
   userId       String    @default("")
+  teamId       String?
   name         String    @unique
   environment  String
   host         String?
   description  String?
-  clientId     String    @unique @default(ulid())
+  clientId     String    @unique @default(cuid())
   clientSecret String
   isActive     Boolean   @default(true)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime? @updatedAt
 
-  User User @relation(fields: [userId], references: [id])
+  // Relations
+  User User  @relation(fields: [userId], references: [id])
+  Team Team? @relation("TeamServers", fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@index([teamId])
 }
 
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
-  username  String     @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String   @unique
   password  String
-  isActive  Boolean    @default(true)
-  createdAt DateTime   @default(now())
-  roles     UserRole[]
-  servers   Server[]
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  roles           UserRole[]
+  servers         Server[]
+  ownedTeams      Team[]           @relation("TeamOwner")
+  teamMemberships TeamMember[]
+  sentInvitations TeamInvitation[] @relation("InvitationSender")
 }
 
 model Role {
   id          String           @id @default(uuid())
-  name        String           @unique
+  name        String
+  description String?          @default("")
+  teamId      String
   permissions RolePermission[]
   users       UserRole[]
+  teamMembers TeamMember[]
 }
 
 model Permission {
-  id       String           @id @default(uuid())
-  resource String
-  action   String
-  roles    RolePermission[]
-
-  @@unique([resource, action])
+  id          String           @id @default(uuid())
+  teamId      String
+  resource    String
+  action      String
+  description String?          @default("")
+  label       String?          @default("")
+  type        String
+  roles       RolePermission[]
 }
 
 model UserRole {
@@ -66,4 +80,85 @@ model RolePermission {
   role         Role       @relation(fields: [roleId], references: [id])
 
   @@id([roleId, permissionId])
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  avatarUrl   String?
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  owner       User             @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     TeamMember[]
+  invitations TeamInvitation[]
+  servers     Server[]         @relation("TeamServers")
+
+  @@index([ownerId])
+  @@index([slug])
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  roleId   String   @default("member") // 'owner' | 'admin' | 'member' | 'viewer'
+  joinedAt DateTime @default(now())
+
+  // Relations
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TeamMemberPermission (Custom permissions per member)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// model TeamMemberPermission {
+//   id         String  @id @default(cuid())
+//   memberId   String
+//   action     String // 'team:view', 'server:create', 'process:start', etc.
+//   resourceId String? // Optional: specific server/process ID for granular permissions
+
+//   // Relations
+//   member TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+//   @@unique([memberId, action, resourceId])
+//   @@index([memberId])
+// }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TeamInvitation
+// ─────────────────────────────────────────────────────────────────────────────
+
+model TeamInvitation {
+  id          String    @id @default(cuid())
+  teamId      String
+  email       String
+  role        String    @default("member") // 'owner' | 'admin' | 'member' | 'viewer'
+  status      String    @default("pending") // 'pending' | 'accepted' | 'expired' | 'revoked'
+  token       String    @unique @default(uuid())
+  message     String?
+  invitedById String
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+
+  // Relations
+  team      Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  invitedBy User @relation("InvitationSender", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([email])
+  @@index([token])
+  @@index([status])
 }

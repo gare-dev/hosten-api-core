@@ -37,9 +37,20 @@ export const RolePermissionRepository = () => {
         })
     }
 
+    const insertInitialRoles = async (roleId: string, keys: string[]) => {
+        return await prisma.rolePermission.createMany({
+            data: keys.map(permissionId => ({
+                roleId,
+                permissionId,
+            })),
+        })
+
+    }
+
     return {
         rolePermissionInsert,
         roleSelect,
-        rolePermissionDelete
+        rolePermissionDelete,
+        insertInitialRoles
     }
 }

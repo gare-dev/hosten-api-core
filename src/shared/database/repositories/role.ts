@@ -1,4 +1,3 @@
-import { id } from "zod/v4/locales"
 import { RoleInsertType } from "../../../modules/role/role-insert/schema"
 import prisma from "../index"
 
@@ -8,6 +7,15 @@ export const RoleRepository = () => {
             data: { ...data }
         })
     }
+
+    const insertInitialRole = async (data: RoleInsertType[]) => {
+        return Promise.all(
+            data.map(role =>
+                prisma.role.create({ data: role })
+            )
+        );
+    };
+
 
     const roleSelect = async () => {
         return await prisma.role.findMany()
@@ -21,6 +29,7 @@ export const RoleRepository = () => {
 
     return {
         roleInsert,
+        insertInitialRole,
         roleSelect,
         roleDelete
     }
