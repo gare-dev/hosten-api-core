@@ -5,6 +5,7 @@ import { STATUS_CODES } from "../../../shared/infra/http/status-codes";
 
 export async function teamSelectByOwnerId(ownerId: string) {
 
+
     const { getTeamsByOwnerId } = TeamRepository()
 
     const teams = await getTeamsByOwnerId(ownerId)

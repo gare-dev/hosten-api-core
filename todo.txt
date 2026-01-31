@@ -1,0 +1,9 @@
+TODO 
+
+1. Limpar os roles, permissoes e o que for necessario de
+um time quando ele é deletado.
+
+2. Separar e criar outra abra na página de times para os 
+times que são do usuário e para os times em que ele está.
+
+3. Parou no endpoint de getmembers

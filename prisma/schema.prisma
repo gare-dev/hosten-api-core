@@ -113,8 +113,7 @@ model TeamMember {
   role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([teamId, userId])
+  
   @@index([teamId])
   @@index([userId])
 }

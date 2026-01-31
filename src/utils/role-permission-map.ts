@@ -1,86 +1,104 @@
 export const rolePermissionMap = {
-    viewer: [
-        // TEAM
-        "team:read",
+  viewer: [
+    // TEAM
+    "team:read",
 
-        // MEMBERS
-        "member:read",
+    // MEMBERS
+    "member:read",
 
-        // INVITATIONS
-        "invitation:read",
+    // INVITATIONS
+    "invitation:read",
 
-        // ROLES
-        "role:read",
+    // ROLES
+    "role:read",
 
-        // SERVERS
-        "server:read",
-    ],
+    "processes:read",
 
-    member: [
-        // TEAM
-        "team:read",
+    // SERVERS
+    "server:read",
+  ],
 
-        // MEMBERS
-        "member:read",
+  member: [
+    // TEAM
+    "team:read",
 
-        // INVITATIONS
-        "invitation:read",
+    // MEMBERS
+    "member:read",
 
-        // ROLES
-        "role:read",
+    // INVITATIONS
+    "invitation:read",
 
-        // SERVERS
-        "server:create",
-        "server:read",
-        "server:update",
-        "server:activate",
-        "server:deactivate",
+    // ROLES
+    "role:read",
 
-        // ⚠️ propositalmente NÃO pode:
-        // - delete server
-        // - credentials
-    ],
+    // SERVERS
+    "server:create",
+    "server:read",
+    "server:update",
+    "server:activate",
+    "server:deactivate",
 
-    admin: [
-        // TEAM
-        "team:read",
-        "team:update",
+    // PROCESSES
+    "processes:read",
+    "processes:start",
+    "processes:stop",
+    "processes:restart",
+    "processes:view_logs",
 
-        // MEMBERS
-        "member:read",
-        "member:invite",
-        "member:remove",
-        "member:assign_role",
+    // ⚠️ propositalmente NÃO pode:
+    // - delete server
+    // - credentials
+  ],
 
-        // INVITATIONS
-        "invitation:create",
-        "invitation:read",
-        "invitation:revoke",
+  admin: [
+    // TEAM
+    "team:read",
+    "team:update",
 
-        // ROLES
-        "role:read",
-        "role:create",
-        "role:update",
-        "role:delete",
+    // MEMBERS
+    "member:read",
+    "member:invite",
+    "member:remove",
+    "member:assign_role",
 
-        // SERVERS
-        "server:create",
-        "server:read",
-        "server:update",
-        "server:delete",
-        "server:activate",
-        "server:deactivate",
+    // INVITATIONS
+    "invitation:create",
+    "invitation:read",
+    "invitation:revoke",
 
-        // CREDENTIALS
-        "credential:read",
-        "credential:rotate",
+    // ROLES
+    "role:read",
+    "role:create",
+    "role:update",
+    "role:delete",
 
-        // PERMISSIONS
-        "permission:read",
-        "permission:assign",
-    ],
+    // SERVERS
+    "server:create",
+    "server:read",
+    "server:update",
+    "server:delete",
+    "server:activate",
+    "server:deactivate",
+    "server:manage",
 
-    owner: [
-        "*",
-    ],
+    // PROCESSES
+    "processes:read",
+    "processes:start",
+    "processes:stop",
+    "processes:restart",
+    "processes:view_logs",
+    "processes:delete",
+    "processes:manage",
+
+    // CREDENTIALS
+    "credential:read",
+    "credential:rotate",
+
+    // PERMISSIONS
+    "permission:read",
+    "permission:assign",
+    "permission:manage",
+  ],
+
+  owner: ["*"],
 };

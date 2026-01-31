@@ -127,6 +127,17 @@ export function getInitialPermissions(teamId: string): ResourceInsertType {
             teamId,
         },
         // ─────────────────────────────
+        // PERMISSIONS
+        // ─────────────────────────────
+        {
+            resource: "permission",
+            action: "manage",
+            type: "team",
+            description: "Manage permissions",
+            label: "Manage Permissions",
+            teamId,
+        },
+        // ─────────────────────────────
         // SERVERS
         // ─────────────────────────────
         {
@@ -177,6 +188,14 @@ export function getInitialPermissions(teamId: string): ResourceInsertType {
             label: "Deactivate Servers",
             teamId,
         },
+        {
+            resource: "server",
+            action: "manage",
+            type: "server",
+            description: "Manage servers",
+            label: "Manage Servers",
+            teamId,
+        },
         // ─────────────────────────────
         // CREDENTIALS (SENSÍVEL)
         // ─────────────────────────────
@@ -213,6 +232,65 @@ export function getInitialPermissions(teamId: string): ResourceInsertType {
             type: "team",
             description: "Assign permissions to roles",
             label: "Assign Permissions",
+            teamId,
+        },
+        // ─────────────────────────────
+        // PROCESSES)
+        // ─────────────────────────────
+        {
+            resource: "processes",
+            action: "read",
+            type: "team",
+            description: "View processes",
+            label: "View Processes",
+            teamId,
+        },
+        {
+            resource: "processes",
+            action: "start",
+            type: "team",
+            description: "Start processes",
+            label: "Start Processes",
+            teamId,
+        },
+        {
+            resource: "processes",
+            action: "stop",
+            type: "team",
+            description: "Stop processes",
+            label: "Stop Processes",
+            teamId,
+        },
+        {
+            resource: "processes",
+            action: "restart",
+            type: "team",
+            description: "Restart processes",
+            label: "Restart Processes",
+            teamId,
+        },
+        {
+            resource: "processes",
+            action: "delete",
+            type: "team",
+            description: "Delete processes",
+            label: "Delete Processes",
+            teamId,
+        },
+        {
+            resource: "processes",
+            action: "view_logs",
+            type: "team",
+            description: "View process logs",
+            label: "View Process Logs",
+            teamId,
+        },
+        {
+            resource: "processes",
+            action: "manage",
+            type: "team",
+            description: "Manage processes",
+            label: "Manage Processes",
             teamId,
         },
     ];
